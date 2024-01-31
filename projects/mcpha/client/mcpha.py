@@ -339,13 +339,14 @@ class HstDisplay(QWidget, Ui_HstDisplay):
         self.figure = Figure()
         if sys.platform != "win32":
             self.figure.set_facecolor("none")
-        self.figure.subplots_adjust(left=0.18, bottom=0.08, right=0.98, top=0.95)
+        self.figure.subplots_adjust(left=0.1, bottom=0.08, right=0.98, top=0.95)
         self.canvas = FigureCanvas(self.figure)
         self.plotLayout.addWidget(self.canvas)
         self.ax = self.figure.add_subplot(111)
         self.ax.grid()
+        self.xunit = "[{:.3f} mV/channel]".format(1000/4096 * self.factor)
+        self.ax.set_xlabel("channel number " + self.xunit)
         self.ax.set_ylabel("counts")
-        self.ax.set_xlabel("channel number")
         x = np.arange(self.bins)
         (self.curve,) = self.ax.plot(x, self.buffer, drawstyle="steps-mid", color=self.color)
         self.roi = [0, 4095]
@@ -480,6 +481,8 @@ class HstDisplay(QWidget, Ui_HstDisplay):
         factor = 1 << value
         self.factor = factor
         bins = self.bins // self.factor
+        self.xunit = "[{:.3f} mV/channel]".format(1000/4096 * self.factor)
+        self.ax.set_xlabel("channel number " + self.xunit)
         x = np.arange(bins)
         y = self.buffer.reshape(-1, self.factor).sum(-1)
         self.curve.set_xdata(x)
@@ -633,14 +636,16 @@ class OscDisplay(QWidget, Ui_OscDisplay):
         self.figure = Figure()
         if sys.platform != "win32":
             self.figure.set_facecolor("none")
-        self.figure.subplots_adjust(left=0.18, bottom=0.08, right=0.98, top=0.95)
+        self.figure.subplots_adjust(left=0.10, bottom=0.08, right=0.98, top=0.95)
         self.canvas = FigureCanvas(self.figure)
         self.plotLayout.addWidget(self.canvas)
         self.ax = self.figure.add_subplot(111)
         self.ax.grid()
         self.ax.set_ylim(-4500, 4500)
-        self.ax.set_xlabel("sample number")
-        self.ax.set_ylabel("ADC units")
+        self.xunit = "[{:d} ns / sample]".format(4*8)
+        self.ax.set_xlabel("sample number " + self.xunit)
+        self.yunit = "[{:.3f} mV]".format(1./4.096)
+        self.ax.set_ylabel("ADC units " + self.yunit)
         x = np.arange(self.tot)
         (self.curve2,) = self.ax.plot(x, self.buffer[1::2], color="#00CCCC")
         (self.curve1,) = self.ax.plot(x, self.buffer[0::2], color="#FFAA00")
@@ -706,6 +711,8 @@ class OscDisplay(QWidget, Ui_OscDisplay):
     def update(self):
         self.curve1.set_ydata(self.buffer[0::2])
         self.curve2.set_ydata(self.buffer[1::2])
+        self.xunit = "[{:d} ns / sample]".format(8*MCPHA.rates[self.mcpha.rateValue.currentIndex()])
+        self.ax.set_xlabel("sample number " + self.xunit)
         self.canvas.draw()
 
     def set_trg_level(self, value):
@@ -768,7 +775,7 @@ class GenDisplay(QWidget, Ui_GenDisplay):
         self.figure = Figure()
         if sys.platform != "win32":
             self.figure.set_facecolor("none")
-        self.figure.subplots_adjust(left=0.18, bottom=0.08, right=0.98, top=0.95)
+        self.figure.subplots_adjust(left=0.10, bottom=0.08, right=0.98, top=0.95)
         self.canvas = FigureCanvas(self.figure)
         self.plotLayout.addWidget(self.canvas)
         self.ax = self.figure.add_subplot(111)
