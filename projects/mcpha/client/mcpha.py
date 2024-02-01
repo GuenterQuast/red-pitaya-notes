@@ -781,7 +781,8 @@ class GenDisplay(QWidget, Ui_GenDisplay):
         self.ax = self.figure.add_subplot(111)
         self.ax.grid()
         self.ax.set_ylabel("counts")
-        self.ax.set_xlabel("channel number")
+        self.xunit = "[0.122 mV /channel]"
+        self.ax.set_xlabel("channel number " + self.xunit)
         x = np.arange(self.bins)
         (self.curve,) = self.ax.plot(x, self.buffer, drawstyle="steps-mid", color="#FFAA00")
         # create navigation toolbar
