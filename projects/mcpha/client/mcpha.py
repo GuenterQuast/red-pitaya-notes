@@ -344,7 +344,7 @@ class HstDisplay(QWidget, Ui_HstDisplay):
         self.plotLayout.addWidget(self.canvas)
         self.ax = self.figure.add_subplot(111)
         self.ax.grid()
-        self.xunit = "[{:.3f} mV/channel]".format(1000/4096 * self.factor)
+        self.xunit = "[{:.3f} mV / channel]".format(1000/4096 * self.factor)
         self.ax.set_xlabel("channel number " + self.xunit)
         self.ax.set_ylabel("counts")
         x = np.arange(self.bins)
@@ -481,7 +481,7 @@ class HstDisplay(QWidget, Ui_HstDisplay):
         factor = 1 << value
         self.factor = factor
         bins = self.bins // self.factor
-        self.xunit = "[{:.3f} mV/channel]".format(1000/4096 * self.factor)
+        self.xunit = "[{:.3f} mV / channel]".format(1000/4096 * self.factor)
         self.ax.set_xlabel("channel number " + self.xunit)
         x = np.arange(bins)
         y = self.buffer.reshape(-1, self.factor).sum(-1)
