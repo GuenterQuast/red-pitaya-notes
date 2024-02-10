@@ -68,6 +68,7 @@ class MCPHA(QMainWindow, Ui_MCPHA):
         self.tabWidget.addTab(self.osc, "Oscilloscope")
         self.tabWidget.addTab(self.gen, "Pulse generator")
         # configure controls
+        self.connectButton.setStyleSheet("background-color: darkorange")
         self.connectButton.clicked.connect(self.start)
         self.syncCheck.toggled.connect(self.set_sync)
         self.neg1Check.toggled.connect(partial(self.set_negator, 0))
@@ -116,6 +117,7 @@ class MCPHA(QMainWindow, Ui_MCPHA):
         self.connectButton.setText("Connect")
         self.connectButton.clicked.disconnect()
         self.connectButton.clicked.connect(self.start)
+        self.connectButton.setStyleSheet("background-color: red")
         self.log.print("IO stopped")
         self.idle = True
 
@@ -133,6 +135,7 @@ class MCPHA(QMainWindow, Ui_MCPHA):
     def connected(self):
         self.startTimer.stop()
         self.readTimer.start(500)
+        self.connectButton.setStyleSheet("background-color: green")
         self.log.print("IO started")
         self.idle = False
         self.waiting = [False for i in range(3)]
