@@ -324,12 +324,12 @@ class HstDisplay(QWidget, Ui_HstDisplay):
         self.mcpha = mcpha
         self.log = log
         self.number = number
-        self.min = 0
-        self.max = 4095
         self.sum = 0
         self.time = np.uint64([75e8, 0])
         self.factor = 1
         self.bins = 4096
+        self.min = 0
+        self.max = self.bins - 1 
         self.buffer = np.zeros(self.bins, np.uint32)
         if number == 0:
             self.color = "#FFAA00"
@@ -462,6 +462,16 @@ class HstDisplay(QWidget, Ui_HstDisplay):
     def home(self):
         self.set_scale(self.logCheck.isChecked())
 
+    def set_xplot_range(self):
+        """set x-range for histogram plot
+        """
+        mn = self.min // self.factor
+        mx = self.max // self.factor
+        xsize = mx - mn
+        self.ax.set_xlim(mn - 0.03*xsize, mx*1.03)
+        self.ax.relim()
+        self.ax.autoscale_view(scalex=True, scaley=True)
+
     def set_scale(self, checked):
         self.toolbar.home()
         self.toolbar.update()
@@ -472,9 +482,7 @@ class HstDisplay(QWidget, Ui_HstDisplay):
             self.ax.set_ylim(auto=True)
             self.ax.set_yscale("linear")
         size = self.bins // self.factor
-        self.ax.set_xlim(-0.05 * size, size * 1.05)
-        self.ax.relim()
-        self.ax.autoscale_view(scalex=True, scaley=True)
+        self.set_xplot_range()
         self.canvas.draw()
 
     def set_bins(self, value):
@@ -498,8 +506,12 @@ class HstDisplay(QWidget, Ui_HstDisplay):
             self.max = self.maxValue.value()
         else:
             self.min = 0
-            self.max = 4095
-
+            self.max = self.bins - 1
+        self.set_xplot_range()
+        self.roi[0] = self.min
+        self.roi[1] = self.max
+        self.update_roi()
+            
     def set_time(self, value):
         value = value // 125000
         h, mod = divmod(value, 3600000)
