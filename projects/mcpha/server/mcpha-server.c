@@ -106,7 +106,9 @@ int main(int argc, char *argv[])
   rst[0] |= 0x0303;
 
   /* reset oscilloscope */
-  rst[1] &= ~0x0003;
+  rst[1] &= ~0x0001;
+  usleep(100);
+  rst[1] &= ~0x0002;
   rst[1] |= 0x0003;
 
   /* set trigger channel */
@@ -206,7 +208,9 @@ int main(int argc, char *argv[])
       else if(code == 2)
       {
         /* reset oscilloscope */
-        rst[1] &= ~0x0003;
+        rst[1] &= ~0x0001;
+        usleep(100);
+        rst[1] &= ~0x0002;
         rst[1] |= 0x0003;
       }
       else if(code == 3)
@@ -561,7 +565,7 @@ void *pulser_handler(void *arg)
   int32_t amplitude, interval;
 
   *gen = 0;
-  *gen = 100000;
+  *gen = 125000;
 
   while(enable_thread)
   {
